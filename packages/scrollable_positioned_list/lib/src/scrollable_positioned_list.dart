@@ -42,6 +42,7 @@ class ScrollablePositionedList extends StatefulWidget {
     required this.itemBuilder,
     Key? key,
     this.itemScrollController,
+    this.scrollController,
     this.shrinkWrap = false,
     ItemPositionsListener? itemPositionsListener,
     this.scrollOffsetController,
@@ -73,6 +74,7 @@ class ScrollablePositionedList extends StatefulWidget {
     Key? key,
     this.shrinkWrap = false,
     this.itemScrollController,
+    this.scrollController,
     ItemPositionsListener? itemPositionsListener,
     this.scrollOffsetController,
     ScrollOffsetListener? scrollOffsetListener,
@@ -107,6 +109,8 @@ class ScrollablePositionedList extends StatefulWidget {
 
   /// Controller for jumping or scrolling to an item.
   final ItemScrollController? itemScrollController;
+
+  final ScrollController? scrollController;
 
   /// Notifier that reports the items laid out in the list after each frame.
   final ItemPositionsNotifier? itemPositionsNotifier;
@@ -308,7 +312,7 @@ class ScrollOffsetController {
 class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     with TickerProviderStateMixin {
   /// Details for the primary (active) [ListView].
-  var primary = _ListDisplayDetails(const ValueKey('Ping'));
+  late _ListDisplayDetails primary;
 
   /// Details for the secondary (transitional) [ListView] that is temporarily
   /// shown when scrolling a long distance.
@@ -328,6 +332,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   void initState() {
     super.initState();
     ItemPosition? initialPosition = PageStorage.of(context).readState(context);
+    primary = _ListDisplayDetails(const ValueKey('Ping'), scrollController: widget.scrollController);
     primary.target = initialPosition?.index ?? widget.initialScrollIndex;
     primary.alignment =
         initialPosition?.itemLeadingEdge ?? widget.initialAlignment;
@@ -655,10 +660,12 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 }
 
 class _ListDisplayDetails {
-  _ListDisplayDetails(this.key);
+  _ListDisplayDetails(this.key, {ScrollController? scrollController}) {
+    this.scrollController = scrollController ?? ScrollController(keepScrollOffset: false);
+  }
 
   final itemPositionsNotifier = ItemPositionsNotifier();
-  final scrollController = ScrollController(keepScrollOffset: false);
+  late ScrollController scrollController;
 
   /// The index of the item to scroll to.
   int target = 0;
