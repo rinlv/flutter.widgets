@@ -344,6 +344,9 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     primary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
     primary.scrollController.addListener(() {
+      if (!primary.scrollController.hasClients) {
+        return;
+      }
       final currentOffset = primary.scrollController.offset;
       final offsetChange = currentOffset - previousOffset;
       previousOffset = currentOffset;
