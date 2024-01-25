@@ -408,7 +408,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
           secondary.target = widget.itemCount - 1;
         });
       }
-      if (widget.initialScrollIndex != oldWidget.initialScrollIndex && primary.target != widget.initialScrollIndex) {
+      if (widget.itemCount != oldWidget.itemCount) {
         setState(() {
           primary.target = widget.initialScrollIndex;
         });
