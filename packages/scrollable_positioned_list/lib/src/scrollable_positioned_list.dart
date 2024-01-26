@@ -44,6 +44,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.itemScrollController,
     this.scrollController,
     this.shrinkWrap = false,
+    this.keepPreviousPosition = true,
     ItemPositionsListener? itemPositionsListener,
     this.scrollOffsetController,
     ScrollOffsetListener? scrollOffsetListener,
@@ -73,6 +74,7 @@ class ScrollablePositionedList extends StatefulWidget {
     required this.separatorBuilder,
     Key? key,
     this.shrinkWrap = false,
+    this.keepPreviousPosition = true,
     this.itemScrollController,
     this.scrollController,
     ItemPositionsListener? itemPositionsListener,
@@ -189,6 +191,11 @@ class ScrollablePositionedList extends StatefulWidget {
   /// in builds of widgets that would otherwise already be built in the
   /// cache extent.
   final double? minCacheExtent;
+
+  /// Whether the [PageStorage] keep previous position
+  ///
+  /// Defaults to true.
+  final bool keepPreviousPosition;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -331,7 +338,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   @override
   void initState() {
     super.initState();
-    ItemPosition? initialPosition = PageStorage.of(context).readState(context);
+    ItemPosition? initialPosition = widget.keepPreviousPosition ? PageStorage.of(context).readState(context) : null;
     primary = _ListDisplayDetails(const ValueKey('Ping'), scrollController: widget.scrollController);
     primary.target = initialPosition?.index ?? widget.initialScrollIndex;
     primary.alignment =
